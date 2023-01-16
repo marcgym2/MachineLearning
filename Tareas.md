@@ -6,7 +6,7 @@
 
 ### Aprendizaje Automático 
 
-- [Tarea 1](https://colab.research.google.com/drive/14iA8HhHRKFz1EpzZOpO0pqiegdV3ViKP#scrollTo=9uLMNtCK9i1_)
+- [Tarea 1: Elección de Conjunto de Datos](https://colab.research.google.com/drive/14iA8HhHRKFz1EpzZOpO0pqiegdV3ViKP#scrollTo=9uLMNtCK9i1_)
 - [Tarea 2]()
 - [Tarea 3]()
 - [Tarea 4]()
