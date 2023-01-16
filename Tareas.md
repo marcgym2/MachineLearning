@@ -1,4 +1,4 @@
-## Universidad Autónoma de Nuevo León
+### Universidad Autónoma de Nuevo León
 
 ### Maestria en Ciencia de Datos
 
