@@ -6,9 +6,9 @@
 
 ### Aprendizaje Automático 
 
-- [Tarea 1: Elección de Conjunto de Datos](https://colab.research.google.com/drive/14iA8HhHRKFz1EpzZOpO0pqiegdV3ViKP#scrollTo=9uLMNtCK9i1_)
-- [Tarea 2: Pre-Procesamiento de datos](https://colab.research.google.com/drive/10hz8AkRbMrC0M5qlboY23VCNFCvqlUO4#scrollTo=BNpmI5Et3IJc)
-- [Tarea 3]()
+- [Tarea 1: Elección de Conjunto de Datos](https://github.com/marcgym2/MachineLearning/blob/91e2eda0ee8f216619ee4d0c1491442e3251b165/Tarea1.ipynb)
+- [Tarea 2: Importar datos](https://github.com/marcgym2/MachineLearning/blob/91e2eda0ee8f216619ee4d0c1491442e3251b165/Tarea2.ipynb)
+- [Tarea 3: Pre-Procesamiento de datos](https://github.com/marcgym2/MachineLearning/blob/91e2eda0ee8f216619ee4d0c1491442e3251b165/Tarea3.ipynb)
 - [Tarea 4]()
 - [Tarea 5]()
 - [Tarea 6]()
