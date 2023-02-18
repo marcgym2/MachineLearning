@@ -23,7 +23,7 @@
     {\large 18 de febrero de 2023\par}
 \end{titlepage}
 
-\subsection{NearestNeighbors}
+\section{NearestNeighbors}
 \setlength{\parskip}{15pt}
 
 El código utiliza la clase NearestNeighbors de scikit-learn para encontrar los k vecinos más cercanos para cada punto en el conjunto de datos. Luego, ordena las distancias de forma ascendente y calcula la curva de k-distancia. La curva de k-distancia muestra la distancia media al k-ésimo vecino más cercano para cada punto, ordenados de forma creciente.
@@ -34,11 +34,11 @@ apropiado para los datos.
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.7\textwidth]{reachability_plot.png}
-\caption{Descripción de la imagen}
+\caption{Representación gráfica de la curva de k-distancia}
 \label{fig:reachability_plot}
 \end{figure}
 
-\subsection{DBSCAN}
+\section{DBSCAN}
 
 Usando los resultados de NearestNeighbors, se aplicó el algoritmo DBSCAN con un valor de $\epsilon = 0.15$ y un valor de $min\_samples = 1$. El resultado fue la siguiente agrupación:
 
@@ -50,13 +50,21 @@ Usando los resultados de NearestNeighbors, se aplicó el algoritmo DBSCAN con un
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.7\textwidth]{DBSCAN.png}
-\caption{puntos centrales y puntos frontera}
+\caption{Representación gráfica de DBSCAN}
 \label{fig:reachability_plot}
 \end{figure}
 
 De lo anterior, podemos observar que no todos los grupos encontrados son necesariamente buenos o útiles. En algunos casos, los grupos pueden ser un artefacto del ruido o de las fluctuaciones aleatorias en los datos, o pueden ser demasiado pequeños o poco significativos para ser útiles. 
 
 Es importante mencionar que al reducir la cantidad de datos y la dimensionalidad de los mismos, con el proposito de evitar el consumo excesivo de memoria, puede perderse información valiosa.
+
+\section{Conclusiones}
+
+En este trabajo se ha presentado un análisis detallado de los datos de un conjunto de imágenes médicas utilizando técnicas de aprendizaje automático. Se ha utilizado la técnica de reducción de dimensionalidad PCA para simplificar los datos y la técnica de clustering DBSCAN para identificar patrones en los datos.
+
+Los resultados obtenidos muestran que la técnica de PCA es efectiva para reducir la dimensionalidad del conjunto de datos, lo que permite una mejor visualización y análisis. Además, se ha encontrado que la técnica de clustering DBSCAN es capaz de identificar patrones en los datos que no son visibles a simple vista.
+
+
 
 \end{document}
 
