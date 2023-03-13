@@ -1,0 +1,183 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{amsmath}
+
+\title{Tarea 8}
+\author{Marco Antonio Obregón Flores}
+\date{13 de Marzo de 2023}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    {\scshape\large Facultad de Ciencias Físico Matemáticas\par}
+    {\scshape\large Maestría en Ciencia de Datos\par}
+    \vspace{1cm}
+    {\huge\bfseries "Modelo de predicción del torque y temperatura en motores síncronos de imanes permanentes mediante redes neuronales no lineales"\par}
+    \vspace{2cm}
+    {\Large\itshape Marco Antonio Obregón Flores\par}
+    \vfill
+    {\large Profesor:\par}
+    {\Large\itshape José Alberto Benavides Vazquez\par}
+    \vspace{1cm}
+    {\large 13 de marzo de 2023\par}
+\end{titlepage}
+
+\begin{abstract}
+Este artículo se enfoca en la predicción del torque y la temperatura del estator en motores síncronos de imanes permanentes mediante modelos de regresión. Se discute el modelo de regresión no lineal basado en redes neuronales, también conocido como red neuronal artificial (ANN), como uno de los modelos más efectivos y ampliamente utilizado. La ANN puede aprender relaciones no lineales entre entradas y salidas mediante el ajuste de los pesos de las conexiones entre las neuronas, lo que la hace adecuada para la predicción de datos complejos y no lineales como la temperatura y el torque en motores síncronos de imanes permanentes. Se presentan diferentes algoritmos de optimización, incluyendo el algoritmo de retropropagación y el algoritmo de Levenberg-Marquardt, y se discute la aplicación de técnicas de regularización como la regularización bayesiana para evitar el sobreajuste del modelo.
+De acuerdo a los resultados obtenidos, se puede concluir que la variable de salida que presenta un mejor ajuste y menor error en todas las métricas evaluadas (RMSE, MAE y MSE) es la que debe considerarse como la más relevante en el modelo. En particular, se observa que la variable de salida con mejor ajuste según el coeficiente de determinación ($R^2$) es la que presenta la mayor capacidad del modelo para explicar la variación en los datos observados. Por lo tanto, se recomienda poner mayor énfasis en el análisis y consideración de la variable de salida que ha obtenido los mejores resultados en términos de ajuste y precisión. 
+\end{abstract}
+
+\section{Introducción}
+\setlength{\parskip}{10pt}
+
+La temperatura es una de las variables más críticas en la operación de los motores eléctricos, ya que puede afectar su rendimiento y vida útil. En particular, en los motores síncronos de imanes permanentes, las altas temperaturas en el devanado del estator, el diente del estator y el yugo del estator pueden afectar la eficiencia y la estabilidad del motor. Por lo tanto, es importante medir y controlar estas temperaturas durante la operación del motor.
+
+En la actualidad, existen diversas técnicas para medir las temperaturas en diferentes partes del motor, como el uso de termopares y unidades de termografía. Además, se pueden utilizar modelos de regresión para predecir estas temperaturas a partir de otras variables medidas en el motor, como la corriente, el voltaje y la velocidad.
+
+Existen varias variables que influyen en la temperatura del estator, como la temperatura del refrigerante (\textbf{coolant}), la temperatura del devanado del estator (\textbf{stator\textunderscore winding}) medida con termopares, la temperatura del diente del estator (\textbf{stator\textunderscore tooth}) medida con termopares, la velocidad del motor (\textbf{motor\textunderscore speed}), la corriente del componente d en coordenadas dq (\textbf{i\textunderscore d}), la corriente del componente q en coordenadas dq (\textbf{i\textunderscore q}), la temperatura de imán permanente (\textbf{pm}) medida con termopares y transmitida de forma inalámbrica a través de una unidad de termografía, y la temperatura del yugo del estator (\textbf{stator\textunderscore yoke}) medida con termopares.
+
+
+En este artículo, nos enfocamos en la predicción del torque y la temperatura del estator en motores síncronos de imanes permanentes mediante modelos de regresión. En particular, se discute el modelo de regresión no lineal basado en redes neuronales, también conocido como red neuronal artificial (ANN), como uno de los modelos más efectivos y ampliamente utilizado. La ANN puede aprender relaciones no lineales entre entradas y salidas mediante el ajuste de los pesos de las conexiones entre las neuronas, lo que la hace adecuada para la predicción de datos complejos y no lineales como la temperatura y el torque en motores síncronos de imanes permanentes.
+
+\section{Metodología Propuesta}
+
+En el desarrollo del modelo de predicción se consideraron los factores que afectan el torque del motor y la temperatura del estator, como la velocidad del motor, el voltaje y la corriente de los componentes d y q, y las temperaturas ambiental y del refrigerante. Por lo tanto, en este artículo se consideraron siete parámetros de entrada: la temperatura ambiente, la temperatura del refrigerante, el componente d del voltaje, el componente q del voltaje, la velocidad del motor, el componente d de la corriente y el componente q de la corriente. Los parámetros de salida considerados son el torque del motor y las temperaturas en la superficie del imán permanente, el yugo del estator, el diente del estator y el devanado del estator.
+
+\textbf{El procedimiento para obtener el proceso de predicción consiste en los siguientes pasos:}
+
+\begin{enumerate}
+\item \textbf{Preprocesamiento de datos:} Se realiza una limpieza y preparación de los datos, eliminando valores faltantes o inconsistentes y normalizando los datos si es necesario.
+\item \textbf{Selección de características:} Se seleccionan las características relevantes que se utilizarán en el modelo de predicción. En este caso, se considerarán las variables mencionadas en la introducción.
+\item \textbf{División de datos:} Se divide el conjunto de datos en dos partes, una para entrenar el modelo y otra para probar su rendimiento.
+\item \textbf{Entrenamiento del modelo:} Se selecciona el modelo de regresión no lineal basado en redes neuronales y se entrena con el conjunto de datos de entrenamiento. Se utilizan diferentes algoritmos de optimización, como el algoritmo de retropropagación o el algoritmo de Levenberg-Marquardt, y se aplican técnicas de regularización como la regularización bayesiana para evitar el sobreajuste del modelo.
+\item \textbf{Evaluación del modelo:} Se evalúa el rendimiento del modelo utilizando el conjunto de datos de prueba. Se calculan métricas como el error cuadrático medio (MSE) y el coeficiente de determinación (R²) para evaluar la precisión del modelo.
+
+Error cuadrático medio (MSE):
+La fórmula matemática del MSE es:
+
+$$MSE = \frac{1}{n} \sum_{i=1}^{n}(y_i - \hat{y_i})^2$$
+
+Donde $y_i$ es el valor real de la variable a predecir, $\hat{y_i}$ es el valor predicho por el modelo y $n$ es el número total de observaciones.
+
+Coeficiente de determinación (R²):
+La fórmula matemática del R² es:
+
+$$R^2 = 1 - \frac{\sum_{i=1}^{n}(y_i - \hat{y_i})^2}{\sum_{i=1}^{n}(y_i - \bar{y})^2}$$
+Donde $y_i$ es el valor real de la variable a predecir, $\hat{y_i}$ es el valor predicho por el modelo, $\bar{y}$ es la media de los valores reales y $n$ es el número total de observaciones.
+
+
+\item \textbf{Optimización del modelo:} Si el modelo no alcanza el rendimiento deseado, se realizan ajustes en la selección de características, hiperparámetros o algoritmos de optimización hasta que se logre un rendimiento aceptable.
+\item \textbf{Uso del modelo para predicción:} Una vez que se ha optimizado el modelo, se puede utilizar para predecir el torque y la temperatura del estator en motores síncronos de imanes permanentes basados en las entradas de las variables mencionadas en la introducción.
+\end{enumerate}
+
+\section{Resultados y Discusión}
+
+\subsection{Descripción de los datos}
+
+Los registros corresponden a mediciones realizadas a un motor síncrono de imán permanente (PMSM), los cuales fueron muestreados a una frecuencia de 2 Hz. El conjunto de datos contiene múltiples sesiones de medición, las cuales se pueden distinguir por el identificador de perfil (profile\textunderscore id) y tienen una duración variable de entre una y seis horas. En total, se registraron 185 horas de operación del motor.
+
+\begin{table}[htbp]
+\centering
+\caption{Variables del conjunto de datos}
+\label{tab:variables}
+\begin{tabular}{c|c}
+\textbf{Variable} & \textbf{Descripción} \\ \hline
+\hline
+u\textunderscore q & Tensión en el eje q del motor \\ \hline
+coolant & Temperatura del refrigerante del motor \\ \hline
+stator\textunderscore winding & Temperatura del devanado del estator del motor \\ \hline
+u\textunderscore d & Tensión en el eje d del motor \\ \hline
+stator\textunderscore tooth & Temperatura del diente del estator del motor \\ \hline
+motor\textunderscore speed & Velocidad del motor \\ \hline
+i\textunderscore d & Corriente en el eje d del motor \\ \hline
+i\textunderscore q & Corriente en el eje q del motor \\ \hline
+pm & Temperatura del imán permanente del motor \\ \hline
+stator\textunderscore yoke & Temperatura del yugo del estator del motor \\ \hline
+ambient & Temperatura ambiente durante la medición \\ \hline
+torque & Par del motor \\ \hline
+profile\textunderscore id & Identificador de la sesión de medición \\ \hline
+\end{tabular}
+\end{table}
+
+Cabe destacar que el motor es excitado por ciclos de conducción diseñados a mano, que establecen una velocidad de referencia y un par de referencia. Las corrientes y voltajes en coordenadas d/q son resultado de una estrategia de control estándar que intenta seguir la velocidad y el par de referencia, y las variables de velocidad y torque son las cantidades resultantes logradas por esa estrategia, derivadas de las corrientes y voltajes establecidos. La mayoría de los ciclos de conducción corresponden a caminatas aleatorias en el plano velocidad-par, con el fin de imitar ciclos de conducción del mundo real de manera más precisa que las excitaciones y rampas de subida y bajada constantes.
+
+
+
+
+\subsection{Preprocesamiento de datos}
+
+
+El código utiliza una red neuronal artificial, que es un método de aprendizaje automático que simula el funcionamiento del cerebro humano. El objetivo es predecir algunas variables de salida a partir de unas variables de entrada  usando los datos de un archivo csv.
+
+El código sigue los siguientes pasos:
+
+\begin{enumerate}
+\item Cargar los datos desde Google Colab y leerlos con pandas.
+\item Definir las variables predictoras y la variable a predecir.
+\item Dividir los datos en conjunto de entrenamiento y prueba, usando el 70\% de los datos para entrenar y el 30\% para probar.
+\item Escalar los datos usando la clase \lstinline{MinMaxScaler}, que transforma los valores al rango $[0, 1]$.
+\item Definir el modelo de red neuronal usando la clase \lstinline{Sequential}, que permite crear capas de neuronas de forma secuencial.
+\item Añadir las capas ocultas usando la clase \lstinline{Dense}, que crea neuronas totalmente conectadas con una función de activación ($\text{relu}$) y una regularización (\lstinline{L1L2}) para evitar el sobreajuste. También se usa la clase \lstinline{Dropout}, que elimina aleatoriamente algunas neuronas durante el entrenamiento para mejorar la generalización.
+\item Añadir la capa de salida usando la clase \lstinline{Dense}, que crea neuronas totalmente conectadas con una función de activación lineal, que es adecuada para problemas de regresión.
+\item Definir el optimizador y la función de pérdida usando la clase \lstinline{Adam} y el error cuadrático medio (\lstinline{mse}), respectivamente.
+\end{enumerate}
+
+\subsection{Desempeño del modelo de predicción}
+
+El módelo usa la librería Keras, que es una librería de código abierto para crear redes neuronales artificiales. El código hace lo siguiente:
+
+\begin{itemize}
+\item Entrena un modelo de red neuronal con los datos de entrenamiento (\lstinline{train_set}) usando la función \lstinline{fit}, que recibe como argumentos las variables predictoras, las variables a predecir, los datos de validación (\lstinline{test_set}), el número de épocas (\lstinline{epochs}) y el tamaño del lote (\lstinline{batch_size}).
+\item Predice las variables a predecir con los datos de prueba (\lstinline{test_set}) usando la función \lstinline{predict}, que recibe como argumento las variables predictoras.
+\item Calcula las métricas de evaluación en el conjunto de prueba usando las funciones de NumPy \lstinline{mean}, \lstinline{square}, \lstinline{sqrt}, \lstinline{abs} y \lstinline{sum}. Las métricas son el error cuadrático medio (\text{MSE}), la raíz del error cuadrático medio (\text{RMSE}), el error absoluto medio (\text{MAE}) y el coeficiente de determinación ($R^{2}$).
+\end{itemize}
+
+\usepackage{booktabs}
+\begin{center}
+\begin{tabular}{ |c|c|c|c|c| }
+\toprule
+\multicolumn{5}{|c|}{Métricas de evaluación} \\
+\midrule
+& RMSE & R\textsuperscript{2} & MAE & MSE \\
+\midrule
+pm & 0.108869 & 0.480450 & 0.086587 & 0.011853 \\
+torque & 0.036204 & 0.943500 & 0.029574 & 0.001311 \\
+stator\_yoke & 0.094262 & 0.836566 & 0.073415 & 0.008885 \\
+stator\_tooth & 0.115637 & 0.723499 & 0.091478 & 0.013372 \\
+stator\_winding & 0.117066 & 0.650030 & 0.093699 & 0.013704 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{figure}[htbp]
+\centering
+\caption{Estructura del modelo}
+\includegraphics[scale=0.6]{"Screenshot 2023-03-05 at 6.08.09 p.m.".png}
+\end{figure}
+
+\pagebreak
+
+
+
+\bibliographystyle{apacite}
+\bibliography{bibliografia}
+
+
+\subsection{Artículo científico}
+
+\bibitem{Akilan} Jun Li, Thangarajah Akilan, (2022). Global Attention-based Encoder-Decoder LSTM Model for Temperature Prediction of Permanent Magnet Synchronous Motors. IEEE, 11.
+
+\subsection{Libro}
+
+\bibitem{hastie2009} Hastie, T., Tibshirani, R., & Friedman, J. (2009). The Elements of Statistical Learning: Data Mining, Inference, and Prediction. Springer.
+
+\subsection{Web}
+\bibitem{kaggle_dataset}
+Kirgiz, W. (2021). Electric Motor Temperature. Recuperado el 10 de enero de 2023, de \url{https://www.kaggle.com/datasets/wkirgsn/electric-motor-temperature}
+
+\end{document}
+
+
