@@ -27,7 +27,7 @@
 
 \begin{abstract}
 Este artículo se enfoca en la predicción del torque y la temperatura del estator en motores síncronos de imanes permanentes mediante modelos de regresión. Se discute el modelo de regresión no lineal basado en redes neuronales, también conocido como red neuronal artificial (ANN), como uno de los modelos más efectivos y ampliamente utilizado. La ANN puede aprender relaciones no lineales entre entradas y salidas mediante el ajuste de los pesos de las conexiones entre las neuronas, lo que la hace adecuada para la predicción de datos complejos y no lineales como la temperatura y el torque en motores síncronos de imanes permanentes. Se presentan diferentes algoritmos de optimización, incluyendo el algoritmo de retropropagación y el algoritmo de Levenberg-Marquardt, y se discute la aplicación de técnicas de regularización como la regularización bayesiana para evitar el sobreajuste del modelo.
-De acuerdo a los resultados obtenidos, se puede concluir que la variable de salida que presenta un mejor ajuste y menor error en todas las métricas evaluadas (RMSE, MAE y MSE) es la que debe considerarse como la más relevante en el modelo. En particular, se observa que la variable de salida con mejor ajuste según el coeficiente de determinación ($R^2$) es la que presenta la mayor capacidad del modelo para explicar la variación en los datos observados. Por lo tanto, se recomienda poner mayor énfasis en el análisis y consideración de la variable de salida que ha obtenido los mejores resultados en términos de ajuste y precisión. 
+Los resultados muestran que la variable de torque es la más relevante en el modelo, ya que presenta el mejor ajuste y menor error en todas las métricas evaluadas (RMSE, MAE y MSE). Además, el coeficiente de determinación ($R^2$) indica que es la variable con mayor capacidad para explicar la variación en los datos observados. Se recomienda enfocarse en el análisis de esta variable debido a sus buenos resultados en términos de ajuste y precisión.
 \end{abstract}
 
 \section{Introducción}
@@ -53,20 +53,38 @@ En el desarrollo del modelo de predicción se consideraron los factores que afec
 \item \textbf{Selección de características:} Se seleccionan las características relevantes que se utilizarán en el modelo de predicción. En este caso, se considerarán las variables mencionadas en la introducción.
 \item \textbf{División de datos:} Se divide el conjunto de datos en dos partes, una para entrenar el modelo y otra para probar su rendimiento.
 \item \textbf{Entrenamiento del modelo:} Se selecciona el modelo de regresión no lineal basado en redes neuronales y se entrena con el conjunto de datos de entrenamiento. Se utilizan diferentes algoritmos de optimización, como el algoritmo de retropropagación o el algoritmo de Levenberg-Marquardt, y se aplican técnicas de regularización como la regularización bayesiana para evitar el sobreajuste del modelo.
-\item \textbf{Evaluación del modelo:} Se evalúa el rendimiento del modelo utilizando el conjunto de datos de prueba. Se calculan métricas como el error cuadrático medio (MSE) y el coeficiente de determinación (R²) para evaluar la precisión del modelo.
+\item \textbf{Evaluación del modelo:} Se evalúa el rendimiento del modelo utilizando el conjunto de datos de prueba. Se calculan métricas como el error cuadrático medio (MSE) y el coeficiente de determinación ($R^2$) para evaluar la precisión del modelo. Además, también se utilizan métricas como el error absoluto medio (MAE) y la raíz del error cuadrático medio (RMSE) para evaluar el desempeño del modelo en términos de la magnitud del error. Todas estas métricas permiten una evaluación rigurosa y completa del modelo en términos de su capacidad para predecir los resultados esperados.
 
-Error cuadrático medio (MSE):
+Error cuadrático medio (MSE).
 La fórmula matemática del MSE es:
 
 $$MSE = \frac{1}{n} \sum_{i=1}^{n}(y_i - \hat{y_i})^2$$
 
 Donde $y_i$ es el valor real de la variable a predecir, $\hat{y_i}$ es el valor predicho por el modelo y $n$ es el número total de observaciones.
 
+Error de raíz cuadrada media (RMSE). La fórmula matemática del RMSE es:
+
+$$RMSE = \sqrt{\frac{1}{n}\sum_{i=1}^n (y_i - \hat{y_i})^2}$$
+
+donde $n$ es el número de observaciones, $y_i$ son los valores observados, y $\hat{y_i}$ son los valores predichos.
+
+Error absoluto medio (MAE). La fórmula matemática del MAE es: 
+
+$$MAE = \frac{1}{n}\sum_{i=1}^n |y_i - \hat{y_i}|$$
+
+donde $n$ es el número de observaciones, $y_i$ son los valores observados, y $\hat{y_i}$ son los valores predichos.
+
+
+
+
+
 Coeficiente de determinación (R²):
 La fórmula matemática del R² es:
 
 $$R^2 = 1 - \frac{\sum_{i=1}^{n}(y_i - \hat{y_i})^2}{\sum_{i=1}^{n}(y_i - \bar{y})^2}$$
 Donde $y_i$ es el valor real de la variable a predecir, $\hat{y_i}$ es el valor predicho por el modelo, $\bar{y}$ es la media de los valores reales y $n$ es el número total de observaciones.
+
+
 
 
 \item \textbf{Optimización del modelo:} Si el modelo no alcanza el rendimiento deseado, se realizan ajustes en la selección de características, hiperparámetros o algoritmos de optimización hasta que se logre un rendimiento aceptable.
@@ -135,13 +153,13 @@ El módelo usa la librería Keras, que es una librería de código abierto para 
 \item Calcula las métricas de evaluación en el conjunto de prueba usando las funciones de NumPy \lstinline{mean}, \lstinline{square}, \lstinline{sqrt}, \lstinline{abs} y \lstinline{sum}. Las métricas son el error cuadrático medio (\text{MSE}), la raíz del error cuadrático medio (\text{RMSE}), el error absoluto medio (\text{MAE}) y el coeficiente de determinación ($R^{2}$).
 \end{itemize}
 
-\usepackage{booktabs}
+
 \begin{center}
 \begin{tabular}{ |c|c|c|c|c| }
 \toprule
 \multicolumn{5}{|c|}{Métricas de evaluación} \\
 \midrule
-& RMSE & R\textsuperscript{2} & MAE & MSE \\
+Variables & RMSE & R\textsuperscript{2} & MAE & MSE \\
 \midrule
 pm & 0.108869 & 0.480450 & 0.086587 & 0.011853 \\
 torque & 0.036204 & 0.943500 & 0.029574 & 0.001311 \\
