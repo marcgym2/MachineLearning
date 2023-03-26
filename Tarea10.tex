@@ -1,0 +1,255 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{amsmath}
+\usepackage{multirow}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage{natbib}
+\bibliographystyle{plain}
+
+\title{Tarea 8}
+\author{Marco Antonio Obregón Flores}
+\date{13 de Marzo de 2023}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    {\scshape\large Facultad de Ciencias Físico Matemáticas\par}
+    {\scshape\large Maestría en Ciencia de Datos\par}
+    \vspace{1cm}
+    {\huge\bfseries Modelo de predicción del torque y temperatura en motores síncronos de imanes permanentes mediante redes neuronales no lineales\par}
+    \vspace{2cm}
+    {\Large\itshape Marco Antonio Obregón Flores\par}
+    \vfill
+    {\large Profesor:\par}
+    {\Large\itshape José Alberto Benavides Vazquez\par}
+    \vspace{1cm}
+    {\large 27 de marzo de 2023\par}
+\end{titlepage}
+
+\begin{abstract}
+Este artículo se enfoca en la predicción del torque y la temperatura del estator en motores síncronos de imanes permanentes mediante modelos de regresión. Se discute el modelo de regresión no lineal basado en redes neuronales, también conocido como red neuronal artificial (ANN), como uno de los modelos más efectivos y ampliamente utilizado. La ANN puede aprender relaciones no lineales entre entradas y salidas mediante el ajuste de los pesos de las conexiones entre las neuronas, lo que la hace adecuada para la predicción de datos complejos y no lineales como la temperatura y el torque en motores síncronos de imanes permanentes. Se presentan diferentes algoritmos de optimización, incluyendo el algoritmo de retropropagación y el algoritmo de Levenberg-Marquardt, y se discute la aplicación de técnicas de regularización como la regularización bayesiana para evitar el sobreajuste del modelo.
+Los resultados muestran que la variable de torque es la más relevante en el modelo, ya que presenta el mejor ajuste y menor error en todas las métricas evaluadas. Además, el coeficiente de determinación ($R^2$) indica que es la variable con mayor capacidad para explicar la variación en los datos observados. Se recomienda enfocarse en el análisis de esta variable debido a sus buenos resultados en términos de ajuste y precisión.
+\end{abstract}
+
+\section{Introducción}
+\setlength{\parskip}{10pt}
+
+La temperatura es una de las variables más críticas en la operación de los motores eléctricos, ya que puede afectar su rendimiento y vida útil. En particular, en los motores síncronos de imanes permanentes, las altas temperaturas en el devanado del estator, el diente del estator y el yugo del estator pueden afectar la eficiencia y la estabilidad del motor según \cite{li2022global}. Por lo tanto, es importante medir y controlar estas temperaturas durante la operación del motor.
+
+En la actualidad, existen diversas técnicas para medir las temperaturas en diferentes partes del motor, como el uso de termopares y unidades de termografía. Además, se pueden utilizar modelos de regresión para predecir estas temperaturas a partir de otras variables medidas en el motor, como la corriente, el voltaje y la velocidad.
+
+Existen varias variables que influyen en la temperatura del estator, como la temperatura del refrigerante (\textbf{coolant}), la temperatura del devanado del estator (\textbf{stator\textunderscore winding}) medida con termopares, la temperatura del diente del estator (\textbf{stator\textunderscore tooth}) medida con termopares, la velocidad del motor (\textbf{motor\textunderscore speed}), la corriente del componente $d$ en coordenadas $dq$ (\textbf{i\textunderscore d}), la corriente del componente $q$ en coordenadas $dq$ (\textbf{i\textunderscore q}), la temperatura de imán permanente (\textbf{pm}) medida con termopares y transmitida de forma inalámbrica a través de una unidad de termografía, y la temperatura del yugo del estator (\textbf{stator\textunderscore yoke}) medida con termopares.
+
+
+En este artículo, nos enfocamos en la predicción del torque y la temperatura del estator en motores síncronos de imanes permanentes mediante modelos de regresión. En particular, se discute el modelo de regresión no lineal basado en redes neuronales, también conocido como red neuronal artificial (ANN), como uno de los modelos más efectivos y ampliamente utilizado. La ANN puede aprender relaciones no lineales entre entradas y salidas mediante el ajuste de los pesos de las conexiones entre las neuronas, lo que la hace adecuada para la predicción de datos complejos y no lineales como la temperatura y el torque en motores síncronos de imanes permanentes.
+
+\section{Metodología Propuesta}
+
+En el desarrollo del modelo de predicción se consideraron los factores que afectan el torque del motor y la temperatura del estator, como la velocidad del motor, el voltaje y la corriente de los componentes $d$ y $q$, y las temperaturas ambiental y del refrigerante. Por lo tanto, en este artículo se consideraron siete parámetros de entrada: la temperatura ambiente, la temperatura del refrigerante, el componente $d$ del voltaje, el componente $q$$ $del voltaje, la velocidad del motor, el componente $d$ de la corriente y el componente $q$ de la corriente. Los parámetros de salida considerados son el torque del motor y las temperaturas en la superficie del imán permanente, el yugo del estator, el diente del estator y el devanado del estator.
+
+\textbf{El procedimiento para obtener el proceso de predicción consiste en los siguientes pasos:}
+
+\begin{enumerate}
+\item \textbf{Preprocesamiento de datos:} Se realiza una limpieza y preparación de los datos, eliminando valores faltantes o inconsistentes y normalizando los datos si es necesario.
+\item \textbf{Selección de características:} Se seleccionan las características relevantes que se utilizarán en el modelo de predicción. En este caso, se considerarán las variables mencionadas en la introducción.
+\item \textbf{División de datos:} Se divide el conjunto de datos en dos partes, una para entrenar el modelo y otra para probar su rendimiento.
+\item \textbf{Entrenamiento del modelo:} Se selecciona el modelo de regresión no lineal basado en redes neuronales y se entrena con el conjunto de datos de entrenamiento. Se utilizan diferentes algoritmos de optimización, como el algoritmo de retropropagación o el algoritmo de Levenberg-Marquardt, y se aplican técnicas de regularización como la regularización bayesiana para evitar el sobreajuste del modelo.
+\item \textbf{Evaluación del modelo:} Se evalúa el rendimiento del modelo mediante el uso del conjunto de datos de prueba. A fin de determinar la precisión del modelo, se calculan varias métricas, incluyendo el coeficiente de determinación ($R^2$) y el error absoluto medio ($MAE$). Estas métricas son útiles para evaluar la calidad del modelo en términos de su capacidad para explicar la varianza de los datos y para proporcionar una medida de la precisión promedio de las predicciones, respectivamente.
+
+
+Error absoluto medio ($MAE$). La fórmula matemática del $MAE$ es: 
+
+$$MAE = \frac{1}{n}\sum_{i=1}^n |y_i - \hat{y_i}|$$
+
+donde $n$ es el número de observaciones, $y_i$ son los valores observados, $y$ $\hat{y_i}$ son los valores predichos.
+
+
+
+
+
+Coeficiente de determinación ($R^2$):
+La fórmula matemática del $R^2$ es:
+
+$$R^2 = 1 - \frac{\sum_{i=1}^{n}(y_i - \hat{y_i})^2}{\sum_{i=1}^{n}(y_i - \bar{y})^2}$$
+Donde $y_i$ es el valor real de la variable a predecir, $\hat{y_i}$ es el valor predicho por el modelo, $\bar{y}$ es la media de los valores reales y $n$ es el número total de observaciones.
+
+
+
+
+\item \textbf{Optimización del modelo:} Si el modelo no alcanza el rendimiento deseado, se realizan ajustes en la selección de características, hiperparámetros o algoritmos de optimización hasta que se logre un rendimiento aceptable.
+\item \textbf{Uso del modelo para predicción:} Una vez que se ha optimizado el modelo, se puede utilizar para predecir el torque y la temperatura del estator en motores síncronos de imanes permanentes basados en las entradas de las variables mencionadas en la introducción.
+\end{enumerate}
+
+\section{Resultados y Discusión}
+
+\subsection{Descripción de los datos}
+
+Los registros corresponden a mediciones realizadas a un motor síncrono de imán permanente (PMSM) \cite{kirgiz2021electric}, los cuales fueron muestreados a una frecuencia de 2 Hz. El conjunto de datos contiene múltiples sesiones de medición, las cuales se pueden distinguir por el identificador de perfil (profile\textunderscore id) y tienen una duración variable de entre una y seis horas. En total, se registraron 185 horas de operación del motor.
+
+\begin{table}[htbp]
+\centering
+\label{tab:variables}
+\begin{tabular}{c|c}
+\textbf{Variables} & \textbf{Descripción} \\ \hline
+\hline
+u\textunderscore q & Tensión en el eje q del motor \\ \hline
+coolant & Temperatura del refrigerante del motor \\ \hline
+stator\textunderscore winding & Temperatura del devanado del estator del motor \\ \hline
+u\textunderscore d & Tensión en el eje d del motor \\ \hline
+stator\textunderscore tooth & Temperatura del diente del estator del motor \\ \hline
+motor\textunderscore speed & Velocidad del motor \\ \hline
+i\textunderscore d & Corriente en el eje d del motor \\ \hline
+i\textunderscore q & Corriente en el eje q del motor \\ \hline
+pm & Temperatura del imán permanente del motor \\ \hline
+stator\textunderscore yoke & Temperatura del yugo del estator del motor \\ \hline
+ambient & Temperatura ambiente durante la medición \\ \hline
+torque & Par del motor \\ \hline
+profile\textunderscore id & Identificador de la sesión de medición \\ \hline
+\end{tabular}
+\caption{Variables del conjunto de datos}
+\end{table}
+
+Cabe destacar que el motor es excitado por ciclos de conducción diseñados a mano, que establecen una velocidad de referencia y un par de referencia. Las corrientes y voltajes en coordenadas $dq$ son resultado de una estrategia de control estándar que intenta seguir la velocidad y el par de referencia, y las variables de velocidad y torque son las cantidades resultantes logradas por esa estrategia, derivadas de las corrientes y voltajes establecidos. La mayoría de los ciclos de conducción corresponden a caminatas aleatorias en el plano velocidad-par, con el fin de imitar ciclos de conducción del mundo real de manera más precisa que las excitaciones y rampas de subida y bajada constantes.
+
+
+
+
+\subsection{Preprocesamiento de datos}
+
+
+El código utiliza una red neuronal artificial, que es un método de aprendizaje automático que simula el funcionamiento del cerebro humano. El objetivo es predecir algunas variables de salida a partir de unas variables de entrada  usando los datos de un archivo csv.
+
+El código sigue los siguientes pasos:
+
+\begin{enumerate}
+\item Cargar los datos desde Google Colab y leerlos con pandas.
+\item Definir las variables predictoras y la variable a predecir.
+\item Dividir los datos en conjunto de entrenamiento y prueba, usando el 70\% de los datos para entrenar y el 30\% para probar.
+\item Escalar los datos usando la clase \lstinline{MinMaxScaler}, que transforma los valores al rango $[0, 1]$.
+\item Definir el modelo de red neuronal usando la clase \lstinline{Sequential}, que permite crear capas de neuronas de forma secuencial.
+\item Añadir las capas ocultas usando la clase \lstinline{Dense}, que crea neuronas totalmente conectadas con una función de activación ($\text{relu}$) y una regularización (\lstinline{L1L2}) para evitar el sobreajuste. También se usa la clase \lstinline{Dropout}, que elimina aleatoriamente algunas neuronas durante el entrenamiento para mejorar la generalización.
+\item Añadir la capa de salida usando la clase \lstinline{Dense}, que crea neuronas totalmente conectadas con una función de activación lineal, que es adecuada para problemas de regresión.
+\item Definir el optimizador y la función de pérdida usando la clase \lstinline{Adam} y el error cuadrático medio (\lstinline{mse}), respectivamente.
+\end{enumerate}
+
+\subsection{Diseño de experimentos}
+
+El diseño óptimo de Box-Behnken es una técnica estadística para encontrar la mejor combinación de variables que afectan a un proceso. En este caso, se quiere encontrar la combinación óptima de variables para obtener las mejores mediciones de rendimiento del motor eléctrico. 
+
+Para aplicar el diseño óptimo de Box-Behnken en Python, se usó una libreria llamada pyDOE2. Esta libreria tiene una función que se llama "bbdesign" que se puede usar para generar la matriz de diseño de Box-Behnken.
+
+
+
+\subsection{Desempeño del modelo de predicción}
+
+El módelo usa la librería Keras, que es una librería de código abierto para crear redes neuronales artificiales. El código hace lo siguiente:
+
+\begin{itemize}
+\item Entrena un modelo de red neuronal con los datos de entrenamiento (\lstinline{train_set}) usando la función \lstinline{fit}, que recibe como argumentos las variables predictoras, las variables a predecir, los datos de validación (\lstinline{test_set}), el número de épocas (\lstinline{epochs}) y el tamaño del lote (\lstinline{batch_size}).
+\item Predice las variables a predecir con los datos de prueba (\lstinline{test_set}) usando la función \lstinline{predict}, que recibe como argumento las variables predictoras.
+\item Calcula las métricas de evaluación en el conjunto de prueba usando las funciones de NumPy \lstinline{mean}, \lstinline{square}, \lstinline{sqrt}, \lstinline{abs} y \lstinline{sum}. Las métricas son  el error absoluto medio (\text{MAE}) y el coeficiente de determinación ($R^{2}$).
+\end{itemize}
+
+
+
+En particular, este modelo representa un motor eléctrico y su relación con varias entradas (u\textunderscore q, coolant, ambient, u\textunderscore d, motor\textunderscore speed, i\textunderscore q e i\textunderscore d) y salidas (torque, pm, stator\textunderscore yoke, stator\textunderscore tooth y stator\textunderscore winding). Las entradas representan los diferentes factores que afectan el rendimiento del motor eléctrico, como la temperatura del refrigerante y el entorno, la velocidad y la corriente, y las salidas representan las diferentes medidas de rendimiento del motor eléctrico, como la producción de torque y la magnetización del rotor permanente.
+
+
+
+
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{ |l|l|l|l| }
+\hline
+\multicolumn{4}{ |c| }{Evaluación de los modelos} \\
+\hline
+Metrica & Variable & Modelo & Valor \\ \hline
+\multirow{15}{*}{$R^2$} & \multirow{3}{*}{torque} & Lineal & 0.088 \\
+ &  & ANN & 0.943500\\
+ &  & Box-Behnken + ANN & 0.969545  \\ 
+ & \multirow{3}{*}{pm} & Lineal & 0.070 \\
+ &  & ANN & 0.480450\\
+ &  & Box-Behnken + ANN & 0.473920\\ 
+ & \multirow{3}{*}{stator\_yoke} & Lineal & 0.062\\
+ &  & ANN & 0.836566\\
+ &  & Box-Behnken + ANN & 0.850503\\ 
+  & \multirow{3}{*}{stator\_tooth} & Lineal & 0.076 \\
+ &  & ANN & 0.723499\\
+ &  & Box-Behnken + ANN & 0.735437\\ 
+ & \multirow{3}{*}{stator\_winding} & Lineal & 0.091\\
+ &  & ANN & 0.650030\\
+ &  & Box-Behnken + ANN & 0.654852\\ \hline
+\hline
+\end{tabular}
+\caption{Tabla de comparativa de ajuste del modelo}
+\label{tab:r2}
+\end{center}
+\end{table}
+
+En el proceso de comparación de modelos, se evaluaron tres modelos diferentes: un modelo lineal, una red neuronal artificial (ANN) y una combinación de Box-Behnken y ANN. El modelo lineal presentó valores significativamente más bajos para el coeficiente de determinación ($R^2$) en todas las variables evaluadas, por lo que se descartó en las comparativas posteriores.
+
+Los resultados muestran que la combinación de Box-Behnken y ANN tuvo el mejor desempeño en todas las variables, con valores de $R^2$ que varían entre 0.47 y 0.97. Esto indica que este modelo es capaz de explicar una gran parte de la variabilidad en los datos. En general, la tabla presentada puede ser de utilidad para seleccionar el mejor modelo en función de la variable que se está analizando en el estudio.
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{ |l|l|l|l| }
+\hline
+\multicolumn{4}{ |c| }{Evaluación de los modelos} \\
+\hline
+Metrica & Variable & Modelo & Valor \\ \hline
+\multirow{15}{*}{$MAE$} & \multirow{3}{*}{torque} &  &  \\
+ &  & ANN & 0.029574\\
+ &  & Box-Behnken + ANN & 0.019625  \\ 
+ & \multirow{3}{*}{pm} &  &  \\
+ &  & ANN & 0.086587\\
+ &  & Box-Behnken + ANN & 0.085861\\ 
+ & \multirow{3}{*}{stator\_yoke} &  & \\
+ &  & ANN & 0.073415\\
+ &  & Box-Behnken + ANN & 0.067936\\ 
+  & \multirow{3}{*}{stator\_tooth} &  &  \\
+ &  & ANN & 0.088294\\
+ &  & Box-Behnken + ANN & 0.735437\\ 
+ & \multirow{3}{*}{stator\_winding} &  & \\
+ &  & ANN & 0.093699\\
+ &  & Box-Behnken + ANN & 0.093604\\ \hline
+\hline
+\end{tabular}
+\caption{Tabla de comparativa de error promedio}
+\label{tab:MAE}
+\end{center}
+\end{table}
+
+Los resultados muestran los errores absolutos medios ($MAE$) para diferentes variables en dos modelos: ANN y Box-Behnken + ANN. En general, se puede observar que la combinación de Box-Behnken y ANN tiene un menor $MAE$ en todas las variables que la ANN sola, lo que indica que este modelo tiene un mejor desempeño en la predicción de estas variables.
+
+En particular, para la variable torque, el $MAE$ es mucho menor en el modelo Box-Behnken + ANN (0.019625) en comparación con ANN sola (0.029574), lo que sugiere que la combinación de ambos modelos tiene una mayor capacidad para predecir el valor de torque. En cambio, para la variable stator\textunderscore tooth, el $MAE$ del modelo Box-Behnken + ANN es considerablemente mayor que el de ANN sola, lo que sugiere que la combinación de modelos no es adecuada para esta variable.
+
+\begin{table}[ht]
+\begin{tabular}{|r|c|c|c|}
+\hline
+\multicolumn{1}{|c|}{Modelo} & epoch & batch size & Tiempo de ejecución en min. \\ \hline
+\textit{ANN} & 50 & 32 & 82.38333333 \\ \hline
+\textit{Box-Behnken + ANN} & 50 & 128 &  23.71666667\\ \hline
+\end{tabular}
+\caption{Tiempo de ejecución de los modelos}
+\label{tab:tiempo-ejecucion}
+\end{table}
+
+La tabla muestra el tiempo de ejecución en minutos de dos modelos de redes neuronales: ANN con epochs igual a 50 y batch size igual a 32, y Box-Behnken + ANN con epochs igual a 50 y batch size igual a 128. En cuanto a los términos técnicos, epochs se refiere al número de veces que el algoritmo de entrenamiento procesa todo el conjunto de datos de entrenamiento, mientras que batch size se refiere al número de muestras que se utilizan en cada paso de entrenamiento. Ambos parámetros pueden afectar significativamente el rendimiento y el tiempo de entrenamiento de una red neuronal.
+
+\subsection{Prueba t-student}
+
+
+\section{Conclusión}
+En resumen, en el artículo se habla sobre cómo predecir el torque y la temperatura en motores síncronos de imanes permanentes usando diferentes modelos de regresión. El modelo de regresión no lineal basado en redes neuronales fue el más efectivo y ampliamente utilizado porque puede aprender relaciones no lineales entre las entradas y salidas del modelo. Se consideraron siete parámetros de entrada y cinco parámetros de salida, y se evaluaron diferentes modelos como un modelo de regresión lineal OLS, una red neuronal artificial (ANN) y una combinación de Box-Behnken y ANN. Los resultados mostraron que la combinación de Box-Behnken y ANN tuvo el mejor desempeño en todas las variables y se recomienda enfocarse en el análisis del torque ya que es la variable más relevante y tiene la capacidad de explicar la variación en los datos observados.
+
+\pagebreak
+
+\bibliography{bibliografia.bib}
+
+\end{document}
+
+
